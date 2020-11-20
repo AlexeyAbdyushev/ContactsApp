@@ -2,12 +2,13 @@ package com.example.contactapp
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import kotlin.properties.Delegates
 
 class ContactAdapter: RecyclerView.Adapter<ContactsViewHolder>() {
+
     private var list = mutableListOf<Contact>()
 
     fun setContacts(list: MutableList<Contact>) {
-        this.list.clear()
         this.list.addAll(list)
         notifyDataSetChanged()
     }

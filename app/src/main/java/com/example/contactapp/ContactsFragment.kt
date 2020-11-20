@@ -16,12 +16,16 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import javax.inject.Inject
 
 class ContactsFragment : Fragment() {
     var contactName: TextView? = null
     var phone: TextView? = null
     var avatar: ImageView? = null
+
+    lateinit var adapter: ContactAdapter
     lateinit var list: MutableList<Contact>
+
     var permissionCheck = false
     private val PERMISSIONS_REQUEST_READ_CONTACTS = 100
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,12 +34,13 @@ class ContactsFragment : Fragment() {
         contactName = view?.findViewById(R.id.name)
         phone = view?.findViewById(R.id.phone_number)
         avatar = view?.findViewById(R.id.avatar)
-        recyclerView?.adapter = ContactAdapter()
+        adapter = ContactAdapter()
         recyclerView?.layoutManager = LinearLayoutManager(context)
+        recyclerView?.adapter = adapter
         checkPermission()
         if (permissionCheck) {
-            recyclerView?.adapter?.notifyDataSetChanged()
-            ContactAdapter().setContacts(list)
+            adapter.setContacts(list)
+            adapter.notifyDataSetChanged()
         }
     }
 
