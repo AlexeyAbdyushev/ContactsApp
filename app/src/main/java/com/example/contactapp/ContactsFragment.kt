@@ -10,38 +10,21 @@ import android.provider.ContactsContract
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import javax.inject.Inject
+
 
 class ContactsFragment : Fragment() {
-    var contactName: TextView? = null
-    var phone: TextView? = null
-    var avatar: ImageView? = null
 
     lateinit var adapter: ContactAdapter
     lateinit var list: MutableList<Contact>
-
     var permissionCheck = false
     private val PERMISSIONS_REQUEST_READ_CONTACTS = 100
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val recyclerView: RecyclerView? = view?.findViewById(R.id.recyclerView)
-        contactName = view?.findViewById(R.id.name)
-        phone = view?.findViewById(R.id.phone_number)
-        avatar = view?.findViewById(R.id.avatar)
-        adapter = ContactAdapter()
-        recyclerView?.layoutManager = LinearLayoutManager(context)
-        recyclerView?.adapter = adapter
-        checkPermission()
-        if (permissionCheck) {
-            adapter.setContacts(list)
-            adapter.notifyDataSetChanged()
-        }
     }
 
     private fun checkPermission() {
@@ -56,6 +39,19 @@ class ContactsFragment : Fragment() {
         }
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val recyclerView: RecyclerView? = view.findViewById(R.id.recyclerView)
+        adapter = ContactAdapter()
+        recyclerView?.layoutManager = LinearLayoutManager(context)
+        recyclerView?.adapter = adapter
+        context?.let { adapter.setContext(it) }
+        checkPermission()
+        if (permissionCheck) {
+            adapter.setContacts(list)
+            adapter.notifyDataSetChanged()
+        }
+        super.onViewCreated(view, savedInstanceState)
+    }
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -65,7 +61,11 @@ class ContactsFragment : Fragment() {
             PERMISSIONS_REQUEST_READ_CONTACTS -> {
                 if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     permissionCheck = false
-                    Toast.makeText(context, "Allow contact permission in settings", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        context,
+                        "Allow contact permission in settings",
+                        Toast.LENGTH_LONG
+                    ).show()
                 } else {
                     list = getContacts()
 
@@ -88,7 +88,6 @@ class ContactsFragment : Fragment() {
         // Android version is lesser than 6.0 or the permission is already granted.
         val contactList: MutableList<Contact> = mutableListOf()
         var phoneNumber: String? = null
-
         //Связываемся с контактными данными и берем с них значения id контакта, имени контакта и его номера:
         val CONTENT_URI: Uri = ContactsContract.Contacts.CONTENT_URI
         val _ID = ContactsContract.Contacts._ID
@@ -106,6 +105,7 @@ class ContactsFragment : Fragment() {
                 //Если значение имени и номера контакта больше 0 (то есть они существуют) выбираем
                 //их значения в приложение привязываем с соответствующие поля "Имя" и "Номер":
                 while (cursor.moveToNext()) {
+                    val numbersOfContact = arrayListOf<String>()
                     val contact_id: String = cursor.getString(cursor.getColumnIndex(_ID))
                     val name: String? = cursor.getString(cursor.getColumnIndex(DISPLAY_NAME))
                     val hasPhoneNumber: Int = cursor.getString(
@@ -129,10 +129,11 @@ class ContactsFragment : Fragment() {
                                         NUMBER
                                     )
                                 )
+                                numbersOfContact.add(phoneNumber ?: "None")
                             }
                         }
+                        contactList.add(Contact(name, phoneNumber, imageUri, numbersOfContact))
                     }
-                    contactList.add(Contact(name, phoneNumber, imageUri))
                 }
             }
         }
