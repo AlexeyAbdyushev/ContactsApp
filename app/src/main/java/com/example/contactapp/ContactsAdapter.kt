@@ -1,16 +1,13 @@
 package com.example.contactapp
-import android.app.Activity
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 
 
-class ContactAdapter: RecyclerView.Adapter<ContactsViewHolder>(){
+class ContactsAdapter: RecyclerView.Adapter<ContactsViewHolder>(){
 
     private var list = mutableListOf<Contact>()
     private var context: Context? = null
@@ -21,7 +18,7 @@ class ContactAdapter: RecyclerView.Adapter<ContactsViewHolder>(){
         this.list.addAll(list)
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactsViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.contact, parent, false)
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.row_contact, parent, false)
         return ContactsViewHolder(itemView)
     }
 

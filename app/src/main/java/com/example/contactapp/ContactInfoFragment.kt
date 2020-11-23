@@ -1,49 +1,47 @@
 package com.example.contactapp
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ArrayAdapter
+import android.view.*
 import android.widget.ImageView
-import android.widget.ListView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-private const val ARG_PARAM3 = "param3"
-/**
- * A simple [Fragment] subclass.
- * Use the [ContactInfoFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+private const val CONTACT_NAME = "name"
+private const val AVATAR_URI = "avatar_uri"
+private const val NUMBERS_LIST = "numbers_list"
+
 class ContactInfoFragment : Fragment() {
     private var contact_name: String? = null
     private var avatar_uri: String? = null
-    private var number: String = ""
     private var numbersList: ArrayList<String> = arrayListOf()
     lateinit var adapter: NumbersAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
         arguments?.let {
-            contact_name = it.getString(ARG_PARAM1)
-            avatar_uri = it.getString(ARG_PARAM2)
-            numbersList = it.getStringArrayList(ARG_PARAM3) as ArrayList<String>
+            contact_name = it.getString(CONTACT_NAME)
+            avatar_uri = it.getString(AVATAR_URI)
+            numbersList = it.getStringArrayList(NUMBERS_LIST) as ArrayList<String>
+            (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.contact_info)
+            (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_contact_info, container, false)
+        return inflater.inflate(R.layout.contact_info_fragment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,30 +53,29 @@ class ContactInfoFragment : Fragment() {
         listView.adapter = adapter
         adapter.setNumbers(numbersList)
         adapter.notifyDataSetChanged()
-        avatar.setImageBitmap(null)
-        if (avatar_uri != null) {
-            Glide
-                .with(view)
-                .load(avatar_uri)
-                .into(avatar)
-        } else {
-            Glide
-                .with(view)
-                .load(R.drawable.ic_user)
-                .into(avatar)
-        }
+        ImageHelper.loadImageByUri(avatar_uri, view, avatar)
         contactName.text = contact_name
         super.onViewCreated(view, savedInstanceState)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                activity?.onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     companion object {
         @JvmStatic
-        fun newInstance(param1: String, param2: String?, param3: ArrayList<String>) =
+        fun newInstance(_contactName: String, _avatarUri: String?, _numbersList: ArrayList<String>) =
             ContactInfoFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                    putStringArrayList(ARG_PARAM3, param3)
+                    putString(CONTACT_NAME, _contactName)
+                    putString(AVATAR_URI, _avatarUri)
+                    putStringArrayList(NUMBERS_LIST, _numbersList)
                 }
             }
     }

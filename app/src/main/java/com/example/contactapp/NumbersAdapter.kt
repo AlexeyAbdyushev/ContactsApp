@@ -14,13 +14,12 @@ import androidx.recyclerview.widget.RecyclerView
 class NumbersAdapter :RecyclerView.Adapter<NumbersViewHolder>(){
 
     private var list = mutableListOf<String>()
-    private var context: Context? = null
     fun setNumbers(list: MutableList<String>) {
         this.list.addAll(list)
         notifyDataSetChanged()
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NumbersViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(com.example.contactapp.R.layout.number_item, parent, false)
+        val itemView = LayoutInflater.from(parent.context).inflate(com.example.contactapp.R.layout.row_phone_number, parent, false)
         return NumbersViewHolder(itemView)
     }
 

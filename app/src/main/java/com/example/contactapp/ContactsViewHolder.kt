@@ -18,19 +18,8 @@ class ContactsViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
     fun bind(contact: Contact) {
         name?.text = contact.name
         phoneNum?.text = contact.phone
-        image?.let {
-            it.setImageBitmap(null)
-            if (contact.imageUri != null) {
-                Glide
-                    .with(itemView)
-                    .load(contact.imageUri)
-                    .into(it)
-            } else {
-                Glide
-                    .with(itemView)
-                    .load(R.drawable.ic_user)
-                    .into(it)
-            }
+        image?.let { _image ->
+            ImageHelper.loadImageByUri(contact.imageUri, itemView, _image)
         }
     }
 }
