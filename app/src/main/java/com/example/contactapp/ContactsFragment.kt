@@ -1,7 +1,6 @@
 package com.example.contactapp
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -13,11 +12,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.lifecycle.ViewModelProviders
 
 class ContactsFragment : Fragment() {
 
@@ -30,7 +27,7 @@ class ContactsFragment : Fragment() {
     var permissionCheck = false
     private val PERMISSIONS_REQUEST_READ_CONTACTS = 100
     val bundle = Bundle()
-
+    var recyclerView: RecyclerView? = null
     private fun checkPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && activity?.checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(
@@ -44,7 +41,7 @@ class ContactsFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val recyclerView: RecyclerView? = view.findViewById(R.id.recyclerView)
+        recyclerView = view.findViewById(R.id.recyclerView)
         (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
         adapter = ContactsAdapter { id ->
@@ -79,7 +76,7 @@ class ContactsFragment : Fragment() {
                     permissionCheck = false
                     Toast.makeText(
                         context,
-                        "Allow contact permission in settings",
+                        getString(R.string.allow_permissions),
                         Toast.LENGTH_LONG
                     ).show()
                 } else {

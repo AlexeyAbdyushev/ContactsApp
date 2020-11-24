@@ -1,13 +1,7 @@
 package com.example.contactapp
 
-import android.R
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.TextView
-import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 
 

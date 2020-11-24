@@ -1,7 +1,6 @@
 package com.example.contactapp
 
 import android.app.Application
-import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
 
 class ContactInfoViewModel (application: Application): AndroidViewModel(application){

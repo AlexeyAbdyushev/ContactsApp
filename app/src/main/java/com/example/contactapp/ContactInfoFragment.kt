@@ -1,9 +1,10 @@
 package com.example.contactapp
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -13,8 +14,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 class ContactInfoFragment : Fragment() {
-    lateinit var adapter: NumbersAdapter
-
+    private lateinit var adapter: NumbersAdapter
+    private lateinit var listView: RecyclerView
+    private lateinit var contactName: TextView
+    private lateinit var avatar: ImageView
     private val contactInfoViewModel by lazy {
         ViewModelProviders.of(this).get(ContactInfoViewModel::class.java)
     }
@@ -34,10 +37,10 @@ class ContactInfoFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val listView: RecyclerView = view.findViewById(R.id.numbers)
-        val contactName: TextView = view.findViewById(R.id.name_info)
-        val avatar: ImageView = view.findViewById(R.id.avatar)
-        val bundle = this.arguments
+        listView = view.findViewById(R.id.numbers)
+        contactName= view.findViewById(R.id.name_info)
+        avatar = view.findViewById(R.id.avatar)
+        val bundle: Bundle? = this.arguments
         contactInfoViewModel.setContact(bundle?.getParcelable("Contact"))
         adapter = NumbersAdapter()
         listView.layoutManager = LinearLayoutManager(context)
