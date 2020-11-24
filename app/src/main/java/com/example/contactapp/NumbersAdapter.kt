@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 class NumbersAdapter :RecyclerView.Adapter<NumbersViewHolder>(){
 
     private var list = mutableListOf<String>()
-    fun setNumbers(list: MutableList<String>) {
+    fun setNumbers(list: ArrayList<String>) {
         this.list.addAll(list)
         notifyDataSetChanged()
     }

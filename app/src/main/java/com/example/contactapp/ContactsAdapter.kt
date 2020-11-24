@@ -7,7 +7,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 
 
-class ContactsAdapter: RecyclerView.Adapter<ContactsViewHolder>(){
+class ContactsAdapter(val listener: (Int) -> Unit): RecyclerView.Adapter<ContactsViewHolder>(){
 
     private var list = mutableListOf<Contact>()
     private var context: Context? = null
@@ -26,14 +26,8 @@ class ContactsAdapter: RecyclerView.Adapter<ContactsViewHolder>(){
         val contact: Contact = list[position]
         holder.bind(contact)
         holder.itemView.setOnClickListener {
-            val fragment = ContactInfoFragment.newInstance(contact.name.toString(), contact.imageUri, contact.numbersList ?: arrayListOf())
-            val fm: FragmentManager = (context as FragmentActivity).supportFragmentManager
-            val transaction = fm.beginTransaction()
-            transaction.replace(R.id.fragment_container, fragment)
-            transaction.addToBackStack(null)
-            transaction.commit()
+            listener(position)
         }
     }
     override fun getItemCount(): Int = list.size
-
 }

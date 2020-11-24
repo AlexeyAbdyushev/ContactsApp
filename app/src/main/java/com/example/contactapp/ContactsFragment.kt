@@ -1,6 +1,7 @@
 package com.example.contactapp
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -10,6 +11,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,6 +29,7 @@ class ContactsFragment : Fragment() {
     lateinit var contactsList: MutableList<Contact>
     var permissionCheck = false
     private val PERMISSIONS_REQUEST_READ_CONTACTS = 100
+    val bundle = Bundle()
 
     private fun checkPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && activity?.checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
@@ -43,7 +47,16 @@ class ContactsFragment : Fragment() {
         val recyclerView: RecyclerView? = view.findViewById(R.id.recyclerView)
         (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.app_name)
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        adapter = ContactsAdapter()
+        adapter = ContactsAdapter { id ->
+            bundle.putParcelable("Contact", contactViewModel.getContactById(id))
+            val fragment = ContactInfoFragment()
+            fragment.arguments = bundle
+            val fm: FragmentManager = (context as FragmentActivity).supportFragmentManager
+            val transaction = fm.beginTransaction()
+            transaction.replace(R.id.fragment_container, fragment)
+            transaction.addToBackStack(null)
+            transaction.commit()
+        }
         recyclerView?.layoutManager = LinearLayoutManager(context)
         recyclerView?.adapter = adapter
         context?.let { adapter.setContext(it) }
@@ -71,7 +84,8 @@ class ContactsFragment : Fragment() {
                     ).show()
                 } else {
                     contactsList = contactViewModel.getContacts()
-                    permissionCheck = true
+                    adapter.setContacts(contactsList)
+                    adapter.notifyDataSetChanged()
                 }
             }
         }
@@ -83,5 +97,10 @@ class ContactsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.contacts_fragment, container, false)
+    }
+
+    override fun onResume() {
+
+        super.onResume()
     }
 }

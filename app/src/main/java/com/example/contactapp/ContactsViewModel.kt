@@ -7,11 +7,14 @@ import android.provider.ContactsContract
 import androidx.lifecycle.AndroidViewModel
 
 class ContactsViewModel(application: Application): AndroidViewModel(application) {
+    private val contactList: MutableList<Contact> = mutableListOf()
     private val context = getApplication<Application>().applicationContext
-
+    private val permCheck: Boolean = false
+    fun getContactById(id: Int): Contact {
+        return contactList[id]
+    }
     fun getContacts(): MutableList<Contact> {
         // Android version is lesser than 6.0 or the permission is already granted.
-        val contactList: MutableList<Contact> = mutableListOf()
         var phoneNumber: String? = null
         //Связываемся с контактными данными и берем с них значения id контакта, имени контакта и его номера:
         val CONTENT_URI: Uri = ContactsContract.Contacts.CONTENT_URI

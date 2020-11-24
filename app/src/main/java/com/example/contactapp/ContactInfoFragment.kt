@@ -1,5 +1,7 @@
 package com.example.contactapp
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.widget.ImageView
@@ -9,11 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val CONTACT_NAME = "name"
-private const val AVATAR_URI = "avatar_uri"
-private const val NUMBERS_LIST = "numbers_list"
 
 class ContactInfoFragment : Fragment() {
     lateinit var adapter: NumbersAdapter
@@ -27,20 +24,11 @@ class ContactInfoFragment : Fragment() {
         setHasOptionsMenu(true)
         (activity as AppCompatActivity).supportActionBar?.title = getString(R.string.contact_info)
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        arguments?.let {
-            contactInfoViewModel._contact_name = it.getString(CONTACT_NAME)
-            contactInfoViewModel.avatar_uri = it.getString(AVATAR_URI)
-            contactInfoViewModel.numbersList = it.getStringArrayList(NUMBERS_LIST) as ArrayList<String>
-
-        }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-    }
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.contact_info_fragment, container, false)
     }
@@ -49,13 +37,15 @@ class ContactInfoFragment : Fragment() {
         val listView: RecyclerView = view.findViewById(R.id.numbers)
         val contactName: TextView = view.findViewById(R.id.name_info)
         val avatar: ImageView = view.findViewById(R.id.avatar)
+        val bundle = this.arguments
+        contactInfoViewModel.setContact(bundle?.getParcelable("Contact"))
         adapter = NumbersAdapter()
         listView.layoutManager = LinearLayoutManager(context)
         listView.adapter = adapter
         adapter.setNumbers(contactInfoViewModel.numbersList)
         adapter.notifyDataSetChanged()
-        ImageHelper.loadImageByUri(contactInfoViewModel.avatar_uri, view, avatar)
-        contactName.text = contactInfoViewModel._contact_name
+        ImageHelper.loadImageByUri(contactInfoViewModel.imageUri, view, avatar)
+        contactName.text = contactInfoViewModel.name
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -67,17 +57,5 @@ class ContactInfoFragment : Fragment() {
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    companion object {
-        fun newInstance(_contactName: String, _avatarUri: String?, _numbersList: ArrayList<String>) =
-            ContactInfoFragment().apply {
-                arguments = Bundle().apply {
-                    putString(CONTACT_NAME, _contactName)
-                    putString(AVATAR_URI, _avatarUri)
-                    putStringArrayList(NUMBERS_LIST, _numbersList)
-                }
-            }
-
     }
 }
