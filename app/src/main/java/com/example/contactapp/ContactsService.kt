@@ -54,13 +54,19 @@ class ContactsService {
 
                         //и соответствующий ему номер:
                         phoneCursor?.let {
+                            phoneCursor.moveToFirst()
+                            phoneNumber = phoneCursor.getString(
+                                    phoneCursor.getColumnIndex(
+                                            NUMBER
+                                    )
+                            )
+                            numbersOfContact.add(phoneNumber ?: "None")
                             while (phoneCursor.moveToNext()) {
-                                phoneNumber = phoneCursor.getString(
+                                numbersOfContact.add(phoneCursor.getString(
                                         phoneCursor.getColumnIndex(
                                                 NUMBER
                                         )
-                                )
-                                numbersOfContact.add(phoneNumber ?: "None")
+                                ) ?: "None")
                             }
                         }
                         contactList.add(Contact(name, phoneNumber, imageUri, numbersOfContact))
