@@ -8,7 +8,7 @@ import android.net.Uri
 import android.os.IBinder
 import android.provider.ContactsContract
 
-class ContactsService: Service() {
+class ContactsService {
     companion object {
         private lateinit var context: Context
         fun setContext(con: Context) {
@@ -69,9 +69,5 @@ class ContactsService: Service() {
             }
         }
         return contactList
-    }
-
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
     }
 }
